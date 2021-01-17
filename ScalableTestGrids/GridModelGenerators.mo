@@ -9,6 +9,7 @@ package GridModelGenerators
     parameter Integer M = 2 "Number of HV lines connected to each EHV_LOAD node";
     String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type1_N_" + String(N) + "_M_" + String(M) + ".mo");
     function print = Modelica.Utilities.Streams.print;
+    parameter String node[2] = {"GEN","LOAD"};
   algorithm
     when initial() then
       Modelica.Utilities.Files.remove(f);
@@ -20,7 +21,7 @@ package GridModelGenerators
       for i in 1:2 * N loop
         for j in 1:N loop
           if i == N and j == div(N + 1, 2) then
-            print("  PowerGrids.Electrical.Buses.ReferenceBus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, UStart = 400e3*0.966, portVariablesPhases = true);", f);
+            print("  PowerGrids.Electrical.Buses.ReferenceBus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, UStart = 400e3 * 0.966, portVariablesPhases = true);", f);
           else
             print("  PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);", f);
           end if;
@@ -33,31 +34,31 @@ package GridModelGenerators
       end for;
       for i in 1:2 * N loop
         for j in 1:N loop
-          print("  Components.ControlledGenerator GEN_" + String(i) + "_" + String(j) + "(GEN(SNom = 1e9,PStart = -806e6, QStart = -300e6));", f);
+          print("  Components.ControlledGenerator GEN_" + String(i) + "_" + String(j) + "(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));", f);
         end for;
       end for;
       for i in 1:N loop
         for j in 1:N loop
           for k in 1:M loop
-            print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = " + String(1e9 / M) + ",  PStart = " + String(800e6 / M) + ", QStart = " + String(100e6 / M) + ");", f);
+            print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = " + String(1e9 / M) + ", PStart = " + String(800e6 / M) + ", QStart = " + String(100e6 / M) + ");", f);
           end for;
         end for;
       end for;
       for i in N + 1:2 * N loop
         for j in 1:N loop
           for k in 1:M loop
-            print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = " + String(1e9 / M) + ",  PStart = " + String(800e6 / M) + ", QStart = " + String(100e6 / M) + ");", f);
+            print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = " + String(1e9 / M) + ", PStart = " + String(800e6 / M) + ", QStart = " + String(100e6 / M) + ");", f);
           end for;
         end for;
       end for;
       for i in 1:2 * N loop
         for j in 1:N loop
-          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400/21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);", f);
+          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);", f);
         end for;
       end for;
       for i in 1:2 * N loop
         for j in 1:N loop
-          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, rFixed = 63/400, X = 0.3, R = 0.003, portVariablesPhases = true);", f);
+          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, rFixed = 63 / 400, X = 0.3, R = 0.003, portVariablesPhases = true);", f);
         end for;
       end for;
       for i in 1:2 * N loop
@@ -82,10 +83,10 @@ package GridModelGenerators
           end for;
         end for;
       end for;
-      print("  PowerGrids.Types.ActivePower Pconst = 800e6/"+String(M)+";", f);
-      print("  PowerGrids.Types.ActivePower Qconst = 100e6/"+String(M)+";", f);
-      print("  PowerGrids.Types.ActivePower Pvar = Pconst*(1 + (if time < 1 then 0 else -0.1));", f);
-      print("  PowerGrids.Types.ActivePower Qvar = Qconst*(1 + (if time < 1 then 0 else -0.1));", f);
+      print("  PowerGrids.Types.ActivePower Pconst = 800e6 / "+String(M)+";", f);
+      print("  PowerGrids.Types.ActivePower Qconst = 100e6 / "+String(M)+";", f);
+      print("  PowerGrids.Types.ActivePower Pvar = Pconst * (1 + (if time < 1 then 0 else -0.1));", f);
+      print("  PowerGrids.Types.ActivePower Qvar = Qconst * (1 + (if time < 1 then 0 else -0.1));", f);
       print("equation", f);
       for i in 1:2 * N loop
         for j in 1:N loop
@@ -113,68 +114,26 @@ package GridModelGenerators
           end for;
         end for;
       end for;
-      for i in 1:2 * N loop
-        if mod(i, 2) == 0 then
-          print("  connect(LINE_EHV_H_" + String(i) + "_1.terminalA, BUS_LOAD_EHV_" + String(i) + "_1.terminal);", f);
-          for j in 2:2 * N - 1 loop
-            if mod(j, 2) == 0 then
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j - 1) + ".terminalB, BUS_GEN_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-            else
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j - 1) + ".terminalB, BUS_LOAD_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-            end if;
-          end for;
-          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(2 * N - 1) + ".terminalB, BUS_GEN_EHV_" + String(i) + "_" + String(N) + ".terminal);", f);
-        else
-          print("  connect(LINE_EHV_H_" + String(i) + "_1.terminalA, BUS_GEN_EHV_" + String(i) + "_1.terminal);", f);
-          for j in 2:2 * N - 1 loop
-            if mod(j, 2) == 0 then
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j - 1) + ".terminalB, BUS_LOAD_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-            else
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j - 1) + ".terminalB, BUS_GEN_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-              print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j - 1) + ".terminal);", f);
-            end if;
-          end for;
-          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(2 * N - 1) + ".terminalB, BUS_LOAD_EHV_" + String(i) + "_" + String(N) + ".terminal);", f);
-        end if;
+      for i in 1:2*N loop
+        for j in 1:2*N-1 loop
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_"+ node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalB, BUS_"+ node[mod(i+j+1,2)+1] + "_EHV_" + String(i) + "_" + String(div(j,2)+1) + ".terminal);", f);
+        end for;
       end for;
-      for i in 1:2 * N - 1 loop
-        if mod(i, 2) == 0 then
-          for j in 1:N loop
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalB, BUS_GEN_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * j) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * j) + ".terminalB, BUS_LOAD_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-          end for;
-        else
-          for j in 1:N loop
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalB, BUS_LOAD_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * j) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(2 * j) + ".terminalB, BUS_GEN_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-          end for;
-        end if;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i+j+1,2)+1] + "_EHV_" + String(i+1) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+        end for;
       end for;
-      for i in 1:2 * N - 1 loop
-        if mod(i, 2) == 0 then
-          for j in 1:N loop
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalB, BUS_GEN_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * j) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * j) + ".terminalB, BUS_LOAD_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-          end for;
-        else
-          for j in 1:N loop
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalA, BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * (j - 1) + 1) + ".terminalB, BUS_LOAD_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * j) + ".terminalA, BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal);", f);
-            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(2 * j) + ".terminalB, BUS_GEN_EHV_" + String(i + 1) + "_" + String(j) + ".terminal);", f);
-          end for;
-        end if;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i+j+1,2)+1] + "_EHV_" + String(i+1) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+        end for;
       end for;
-      print("  annotation(__OpenModelica_commandLineOptions = \"-d=newInst --daeMode --tearingMethod=minimalTearing\",", f);
+      print("  annotation(__OpenModelica_commandLineOptions = \"-d=execstat --daeMode --tearingMethod=minimalTearing\",", f);
+      print("             __OpenModelica_simulationFlags(nls=\"kinsol\", lv=\"LOG_STATS\"),", f);
       print("             experiment(StopTime = 15, Tolerance = 1e-4));", f);
       print("end Type1_N_" + String(N) + "_M_" + String(M) + ";", f);
     end when;
@@ -230,17 +189,18 @@ package GridModelGenerators
 
   model Type1Sample_N_1_M_2
     extends Modelica.Icons.Example;
-    inner PowerGrids.Electrical.System systemPowerGrids(initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);
+    inner PowerGrids.Electrical.System systemPowerGrids(
+      initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);
     PowerGrids.Electrical.Buses.ReferenceBus BUS_GEN_EHV_1_1(SNom = 1e9, UNom = 400e3, UStart = 400e3 * 0.966, portVariablesPhases = true);
     PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_2_1(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);
     PowerGrids.Electrical.Buses.Bus BUS_LOAD_EHV_1_1(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);
     PowerGrids.Electrical.Buses.Bus BUS_LOAD_EHV_2_1(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);
     Components.ControlledGenerator GEN_1_1(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));
     Components.ControlledGenerator GEN_2_1(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_1_1(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_2_1(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_LOAD_1_1(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, rFixed = 63 / 400, X = 0.3, R = 0.003, portVariablesPhases = true);
@@ -286,14 +246,15 @@ package GridModelGenerators
     connect(LINE_EHV_V_B_1_1.terminalB, BUS_LOAD_EHV_2_1.terminal);
     connect(LINE_EHV_V_B_1_2.terminalA, BUS_LOAD_EHV_1_1.terminal);
     connect(LINE_EHV_V_B_1_2.terminalB, BUS_GEN_EHV_2_1.terminal);
-    annotation(
-      __OpenModelica_commandLineOptions = "-d=newInst --daeMode --tearingMethod=minimalTearing",
-      experiment(StopTime = 15, Tolerance = 1e-4));
+    annotation(__OpenModelica_commandLineOptions = "-d=execstat --daeMode --tearingMethod=minimalTearing",
+               __OpenModelica_simulationFlags(nls="kinsol", lv="LOG_STATS"),
+               experiment(StopTime = 15, Tolerance = 1e-4));
   end Type1Sample_N_1_M_2;
 
   model Type1Sample_N_2_M_2
     extends Modelica.Icons.Example;
-    inner PowerGrids.Electrical.System systemPowerGrids(initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);
+    inner PowerGrids.Electrical.System systemPowerGrids(
+      initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);
     PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_1_1(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);
     PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_1_2(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);
     PowerGrids.Electrical.Buses.ReferenceBus BUS_GEN_EHV_2_1(SNom = 1e9, UNom = 400e3, UStart = 400e3 * 0.966, portVariablesPhases = true);
@@ -318,22 +279,22 @@ package GridModelGenerators
     Components.ControlledGenerator GEN_3_2(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));
     Components.ControlledGenerator GEN_4_1(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));
     Components.ControlledGenerator GEN_4_2(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_2_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_2_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_2_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_2_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_2_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_2_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_2_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
-    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_2_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 500e6, PStart = 400e6, QStart = 50e6);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_2_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_1_2_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_1_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_2_1(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_2_2_2(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_2_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_3_2_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_1_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_1_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_2_1(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
+    PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_4_2_2(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = 5e+08, PStart = 4e+08, QStart = 5e+07);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_1_1(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_1_2(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);
     PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_2_1(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);
@@ -535,8 +496,8 @@ package GridModelGenerators
     connect(LINE_EHV_V_B_3_3.terminalB, BUS_LOAD_EHV_4_2.terminal);
     connect(LINE_EHV_V_B_3_4.terminalA, BUS_LOAD_EHV_3_2.terminal);
     connect(LINE_EHV_V_B_3_4.terminalB, BUS_GEN_EHV_4_2.terminal);
-    annotation(
-      __OpenModelica_commandLineOptions = "-d=newInst --daeMode --tearingMethod=minimalTearing",
-      experiment(StopTime = 15, Tolerance = 1e-4));
+    annotation(__OpenModelica_commandLineOptions = "-d=execstat --daeMode --tearingMethod=minimalTearing",
+               __OpenModelica_simulationFlags(nls="kinsol", lv="LOG_STATS"),
+               experiment(StopTime = 15, Tolerance = 1e-4));
   end Type1Sample_N_2_M_2;
 end GridModelGenerators;
