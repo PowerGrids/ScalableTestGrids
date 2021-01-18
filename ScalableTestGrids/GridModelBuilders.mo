@@ -1,9 +1,9 @@
 within ScalableTestGrids;
 
-package GridModelGenerators
+package GridModelBuilders
   extends Modelica.Icons.Package;
 
-  model Type1ModelGenerator_N_1_M_2
+  model Type1ModelBuilder_N_1_M_2
     extends Modelica.Icons.Example;
     parameter Integer N = 1 "Number of basic grid cells";
     parameter Integer M = 2 "Number of HV lines connected to each EHV_LOAD node";
@@ -137,55 +137,55 @@ package GridModelGenerators
       print("             experiment(StopTime = 15, Tolerance = 1e-4));", f);
       print("end Type1_N_" + String(N) + "_M_" + String(M) + ";", f);
     end when;
-  end Type1ModelGenerator_N_1_M_2;
+  end Type1ModelBuilder_N_1_M_2;
 
-  model Type1ModelGenerator_N_2_M_2
-    extends Type1ModelGenerator_N_1_M_2(N = 2, M = 2);
-  end Type1ModelGenerator_N_2_M_2;
+  model Type1ModelBuilder_N_2_M_2
+    extends Type1ModelBuilder_N_1_M_2(N = 2, M = 2);
+  end Type1ModelBuilder_N_2_M_2;
 
-  model Type1ModelGenerator_N_2_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 2, M = 4);
-  end Type1ModelGenerator_N_2_M_4;
+  model Type1ModelBuilder_N_2_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 2, M = 4);
+  end Type1ModelBuilder_N_2_M_4;
   
-  model Type1ModelGenerator_N_3_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 3, M = 4);
-  end Type1ModelGenerator_N_3_M_4;
+  model Type1ModelBuilder_N_3_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 3, M = 4);
+  end Type1ModelBuilder_N_3_M_4;
   
-  model Type1ModelGenerator_N_4_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 4, M = 4);
-  end Type1ModelGenerator_N_4_M_4;
+  model Type1ModelBuilder_N_4_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 4, M = 4);
+  end Type1ModelBuilder_N_4_M_4;
   
-  model Type1ModelGenerator_N_6_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 6, M = 4);
-  end Type1ModelGenerator_N_6_M_4;
+  model Type1ModelBuilder_N_6_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 6, M = 4);
+  end Type1ModelBuilder_N_6_M_4;
   
-  model Type1ModelGenerator_N_8_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 8, M = 4);
-  end Type1ModelGenerator_N_8_M_4;
+  model Type1ModelBuilder_N_8_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 8, M = 4);
+  end Type1ModelBuilder_N_8_M_4;
   
-  model Type1ModelGenerator_N_11_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 11, M = 4);
-  end Type1ModelGenerator_N_11_M_4;
+  model Type1ModelBuilder_N_11_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 11, M = 4);
+  end Type1ModelBuilder_N_11_M_4;
   
-  model Type1ModelGenerator_N_16_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 16, M = 4);
-  end Type1ModelGenerator_N_16_M_4;
+  model Type1ModelBuilder_N_16_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 16, M = 4);
+  end Type1ModelBuilder_N_16_M_4;
   
-  model Type1ModelGenerator_N_23_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 23, M = 4);
-  end Type1ModelGenerator_N_23_M_4;
+  model Type1ModelBuilder_N_23_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 23, M = 4);
+  end Type1ModelBuilder_N_23_M_4;
   
-  model Type1ModelGenerator_N_32_M_4
-    extends Type1ModelGenerator_N_1_M_2(N =32, M = 4);
-  end Type1ModelGenerator_N_32_M_4;
+  model Type1ModelBuilder_N_32_M_4
+    extends Type1ModelBuilder_N_1_M_2(N =32, M = 4);
+  end Type1ModelBuilder_N_32_M_4;
   
-  model Type1ModelGenerator_N_45_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 45, M = 4);
-  end Type1ModelGenerator_N_45_M_4;
+  model Type1ModelBuilder_N_45_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 45, M = 4);
+  end Type1ModelBuilder_N_45_M_4;
   
-  model Type1ModelGenerator_N_64_M_4
-    extends Type1ModelGenerator_N_1_M_2(N = 64, M = 4);
-  end Type1ModelGenerator_N_64_M_4;
+  model Type1ModelBuilder_N_64_M_4
+    extends Type1ModelBuilder_N_1_M_2(N = 64, M = 4);
+  end Type1ModelBuilder_N_64_M_4;
 
   model Type1Sample_N_1_M_2
     extends Modelica.Icons.Example;
@@ -500,4 +500,4 @@ package GridModelGenerators
                __OpenModelica_simulationFlags(nls="kinsol", lv="LOG_STATS"),
                experiment(StopTime = 15, Tolerance = 1e-4));
   end Type1Sample_N_2_M_2;
-end GridModelGenerators;
+end GridModelBuilders;
