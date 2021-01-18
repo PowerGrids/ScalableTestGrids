@@ -1,6 +1,6 @@
 # ScalableTestGrids - A library of power system large-scale test cases to assess Modelica tools performances
 
-This repository contains the code for ScalableTestGrids, a Modelica library creating to generate power system large-scale test cases to assess Modelica tools performances. This library was originally developed by RTE with help from Dynamica s.r.l. It is part of a larger effort to promote both the use of Modelica for power system modelling and the advantages of open-source approaches (for more detail, go to [Dyna&omega;o website](http://dynawo.org)).
+This repository contains the code for ScalableTestGrids, a Modelica library created to generate power system large-scale test cases to assess Modelica tools performance. This library was originally developed by RTE with help from Dynamica s.r.l. It is part of a larger effort to promote both the use of Modelica for power system modelling and the advantages of open-source approaches (for more detail, go to [Dyna&omega;o website](http://dynawo.org)).
 
 ## Table of Contents
 - [About ScalableTestGrids](#about)
@@ -11,7 +11,7 @@ This repository contains the code for ScalableTestGrids, a Modelica library crea
 <a name="about"></a>
 ## About ScalableTestGrids
 
-The ScalableTestGrids is a library of power system large-scale test cases to assess Modelica tools performances. It is based on the PowerGrids models and represent an excellent, high-quality and publicly available benchmark to test the efficiency of Modelica tools on large-scale problems and the progresses done on this topic. 
+The ScalableTestGrids is a library of power system large-scale test cases to assess Modelica tools performances. It is based on the PowerGrids models and represents an excellent, high-quality and publicly available benchmark to test the efficiency of Modelica tools on large-scale problems and the progresses done on this topic. 
 
 The library offers the possibility to easily create new test cases by setting the number of generators and loads (N and M). Each test system is a 2N x 2N EHV (400 kV) grid, with alternating generator and load nodes. Each generator node is fed by a controlled synchronous generator, taken straight from the PowerGrids library examples in the tutorial, and by a step-up transformer. Each load node is connected to a step-down transformer to 63 kV, which is followed by M series-connected HV lines, with a load attached at the end of each one. The systems start in steady state, then at time = 1 the loads of the upper half of the grid are reduced by 10% - this triggers a transient involving the primary frequency control, and also a bit of inter-area oscillations, since there is some power transfer from south to north at the beginning. 
 
