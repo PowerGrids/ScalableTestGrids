@@ -1,4 +1,4 @@
-# ScalableTestGrids - A library of power system large-scale test cases to assess Modelica tools performances
+# ScalableTestGrids - A library of power system large-scale test cases to assess Modelica tools performance
 
 This repository contains the code for ScalableTestGrids, a Modelica library created to generate power system large-scale test cases to assess Modelica tools performance. This library was originally developed by RTE with help from Dynamica s.r.l. It is part of a larger effort to promote both the use of Modelica for power system modelling and the advantages of open-source approaches (for more detail, go to [Dyna&omega;o website](http://dynawo.org)).
 
