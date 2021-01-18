@@ -1,12 +1,12 @@
 within ScalableTestGrids;
 
-package GridModelBuilders
+package GridModelBuilders "Run these models to build the models contained in the Models package"
   extends Modelica.Icons.Package;
 
-  model Type1ModelBuilder_N_1_M_2
+  model Type1ModelBuilder_N_1_M_1 "Builds Type1 grid with N = 1, M = 1"
     extends Modelica.Icons.Example;
     parameter Integer N = 1 "Number of basic grid cells";
-    parameter Integer M = 2 "Number of HV lines connected to each EHV_LOAD node";
+    parameter Integer M = 1 "Number of HV lines connected to each EHV_LOAD node";
     String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type1_N_" + String(N) + "_M_" + String(M) + ".mo");
     function print = Modelica.Utilities.Streams.print;
     parameter String node[2] = {"GEN","LOAD"};
@@ -137,57 +137,61 @@ package GridModelBuilders
       print("             experiment(StopTime = 15, Tolerance = 1e-4));", f);
       print("end Type1_N_" + String(N) + "_M_" + String(M) + ";", f);
     end when;
+  end Type1ModelBuilder_N_1_M_1;
+
+  model Type1ModelBuilder_N_1_M_2 "Builds Type1 grid with N = 1, M = 2"
+    extends Type1ModelBuilder_N_1_M_1(N = 1, M = 2);
   end Type1ModelBuilder_N_1_M_2;
 
-  model Type1ModelBuilder_N_2_M_2
-    extends Type1ModelBuilder_N_1_M_2(N = 2, M = 2);
+  model Type1ModelBuilder_N_2_M_2 "Builds Type1 grid with N = 2, M = 2"
+    extends Type1ModelBuilder_N_1_M_1(N = 2, M = 2);
   end Type1ModelBuilder_N_2_M_2;
 
-  model Type1ModelBuilder_N_2_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 2, M = 4);
+  model Type1ModelBuilder_N_2_M_4 "Builds Type1 grid with N = 2, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 2, M = 4);
   end Type1ModelBuilder_N_2_M_4;
   
-  model Type1ModelBuilder_N_3_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 3, M = 4);
+  model Type1ModelBuilder_N_3_M_4 "Builds Type1 grid with N = 3, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 3, M = 4);
   end Type1ModelBuilder_N_3_M_4;
   
-  model Type1ModelBuilder_N_4_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 4, M = 4);
+  model Type1ModelBuilder_N_4_M_4 "Builds Type1 grid with N = 4, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 4, M = 4);
   end Type1ModelBuilder_N_4_M_4;
   
-  model Type1ModelBuilder_N_6_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 6, M = 4);
+  model Type1ModelBuilder_N_6_M_4 "Builds Type1 grid with N = 6, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 6, M = 4);
   end Type1ModelBuilder_N_6_M_4;
   
-  model Type1ModelBuilder_N_8_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 8, M = 4);
+  model Type1ModelBuilder_N_8_M_4 "Builds Type1 grid with N = 8, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 8, M = 4);
   end Type1ModelBuilder_N_8_M_4;
   
-  model Type1ModelBuilder_N_11_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 11, M = 4);
+  model Type1ModelBuilder_N_11_M_4 "Builds Type1 grid with N = 11, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 11, M = 4);
   end Type1ModelBuilder_N_11_M_4;
   
-  model Type1ModelBuilder_N_16_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 16, M = 4);
+  model Type1ModelBuilder_N_16_M_4 "Builds Type1 grid with N = 16, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 16, M = 4);
   end Type1ModelBuilder_N_16_M_4;
   
-  model Type1ModelBuilder_N_23_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 23, M = 4);
+  model Type1ModelBuilder_N_23_M_4 "Builds Type1 grid with N = 23, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 23, M = 4);
   end Type1ModelBuilder_N_23_M_4;
   
-  model Type1ModelBuilder_N_32_M_4
-    extends Type1ModelBuilder_N_1_M_2(N =32, M = 4);
+  model Type1ModelBuilder_N_32_M_4 "Builds Type1 grid with N = 32, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N =32, M = 4);
   end Type1ModelBuilder_N_32_M_4;
   
-  model Type1ModelBuilder_N_45_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 45, M = 4);
+  model Type1ModelBuilder_N_45_M_4 "Builds Type1 grid with N = 45, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 45, M = 4);
   end Type1ModelBuilder_N_45_M_4;
   
-  model Type1ModelBuilder_N_64_M_4
-    extends Type1ModelBuilder_N_1_M_2(N = 64, M = 4);
+  model Type1ModelBuilder_N_64_M_4 "Builds Type1 grid with N = 64, M = 4"
+    extends Type1ModelBuilder_N_1_M_1(N = 64, M = 4);
   end Type1ModelBuilder_N_64_M_4;
 
-  model Type1Sample_N_1_M_2
+  model Type1Sample_N_1_M_2 "Manually built sample model for N = 1, M = 2, compare with automatically built one"
     extends Modelica.Icons.Example;
     inner PowerGrids.Electrical.System systemPowerGrids(
       initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);
@@ -251,7 +255,7 @@ package GridModelBuilders
                experiment(StopTime = 15, Tolerance = 1e-4));
   end Type1Sample_N_1_M_2;
 
-  model Type1Sample_N_2_M_2
+  model Type1Sample_N_2_M_2 "Manually built sample model for N = 1, M = 2, compare with automatically built one"
     extends Modelica.Icons.Example;
     inner PowerGrids.Electrical.System systemPowerGrids(
       initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);

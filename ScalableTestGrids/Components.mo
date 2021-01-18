@@ -1,5 +1,5 @@
 within ScalableTestGrids;
-package Components
+package Components "Components to build the grid model"
   extends Modelica.Icons.Package;
   model ControlledGenerator "Model of a synchronous generator with governor, AVR, and PSS"
     extends PowerGrids.Icons.Machine;
