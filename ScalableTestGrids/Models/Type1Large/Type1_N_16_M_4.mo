@@ -1,4 +1,4 @@
-within ScalableTestGrids.Models;
+within ScalableTestGrids.Models.Type1Large;
 model Type1_N_16_M_4
   extends Modelica.Icons.Example;
   inner PowerGrids.Electrical.System systemPowerGrids(
