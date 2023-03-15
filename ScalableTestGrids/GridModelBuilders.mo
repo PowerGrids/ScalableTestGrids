@@ -7,13 +7,13 @@ package GridModelBuilders "Run these models to build the models contained in the
     extends Modelica.Icons.Example;
     parameter Integer N = 1 "Number of basic grid cells";
     parameter Integer M = 1 "Number of HV lines connected to each EHV_LOAD node";
-    String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type1_N_" + String(N) + "_M_" + String(M) + ".mo");
+    String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type1/Type1_N_" + String(N) + "_M_" + String(M) + ".mo");
     function print = Modelica.Utilities.Streams.print;
     parameter String node[2] = {"GEN","LOAD"};
   algorithm
     when initial() then
       Modelica.Utilities.Files.remove(f);
-      print("within ScalableTestGrids.Models;", f);
+      print("within ScalableTestGrids.Models.Type1;", f);
       print("model Type1_N_" + String(N) + "_M_" + String(M), f);
       print("  extends Modelica.Icons.Example;", f);
       print("  inner PowerGrids.Electrical.System systemPowerGrids(", f);
@@ -504,4 +504,206 @@ package GridModelBuilders "Run these models to build the models contained in the
                __OpenModelica_simulationFlags(nls="kinsol", lv="LOG_STATS"),
                experiment(StopTime = 15, Tolerance = 1e-4));
   end Type1Sample_N_2_M_2;
+  
+  model Type2ModelBuilder_N_1_M_1 "Builds Type2 grid with N = 1, M = 1, tap changers optional"
+  extends Modelica.Icons.Example;
+    parameter Integer N = 2 "Number of basic grid cells";
+    parameter Integer M = 2 "Number of HV lines connected to each EHV_LOAD node";
+    parameter Boolean useTap = true "= true to use transformers with tap changers";
+    parameter Boolean noEv = false "= true if model should not generate events";
+    parameter Real UMax = 60e3 "Max HV voltage for tap changers";
+    parameter Real UStop = 59e3 "Stop HV voltage for tap changers";
+    String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type2/Type2_" + (if not useTap then "noTap__" elseif noEv then "tapNoEv" else "tapEv__") + "_N_" + String(N) + "_M_" + String(M) + ".mo");
+    function print = Modelica.Utilities.Streams.print;
+    parameter String node[2] = {"GEN", "LOAD"};
+  algorithm
+    when initial() then
+      Modelica.Utilities.Files.remove(f);
+      print("within ScalableTestGrids.Models.Type2;", f);
+      print("model Type2_" + (if not useTap then "noTap__" elseif noEv then "tapNoEv" else "tapEv__")+"_N_" + String(N) + "_M_" + String(M), f);
+      print("  extends Modelica.Icons.Example;", f);
+      print("  inner PowerGrids.Electrical.System systemPowerGrids(", f);
+      print("    initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);", f);
+      for i in 1:2*N loop
+        for j in 1:N loop
+          if i == N and j == div(N + 1, 2) then
+            print("  PowerGrids.Electrical.Buses.ReferenceBus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, UStart = 400e3 * 0.966, portVariablesPhases = true);", f);
+          else
+            print("  PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);", f);
+          end if;
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.Buses.Bus BUS_LOAD_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  Components.ControlledGenerator GEN_" + String(i) + "_" + String(j) + "(GEN(SNom = 1e9, PStart = -806e6, QStart = -300e6));", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          for k in 1:M loop
+            if i == N then
+              print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pvar, QRef = Qvar, UNom = 63e3, SNom = " + String(1e9/M) + ", PStart = " + String(800e6/M) + ", QStart = " + String(100e6/M) + ");", f);
+            else
+              print("  PowerGrids.Electrical.Loads.LoadPQVoltageDependence LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(PRef = Pconst, QRef = Qconst, UNom = 63e3, SNom = " + String(1e9/M) + ", PStart = " + String(800e6/M) + ", QStart = " + String(100e6/M) + ");", f);
+            end if;
+          end for;
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          if useTap then 
+            print("  PowerGrids.Electrical.Branches.TransformerWithTapChangerMax TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, K = 63/400*{0.96, 0.97, 0.98, 0.99, 1.00}, UMax = " + String(UMax) + ", UStop = " + String(UStop) + ", Ntap = 5, t1st = 1, tNext = 1, tapStart = 5, X = 0.3, R = 0.003, portVariablesPhases = true);", f);
+          else
+            print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, rFixed = 63/400, X = 0.3, R = 0.003, portVariablesPhases = true);", f);        
+          end if;
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:2*N - 1 loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_H_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_V_A_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_V_B_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          for k in 1:M loop
+            print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + "(SNom = 1e9, UNom = 63e3, X = " + String(0.2/M) + ", R = " + String(0.02/M) + ");", f);
+          end for;
+        end for;
+      end for;
+      print("  PowerGrids.Types.ActivePower Pconst = 800e6 / " + String(M) + ";", f);
+      print("  PowerGrids.Types.ActivePower Qconst = 100e6 / " + String(M) + ";", f);
+      print("  PowerGrids.Types.ActivePower Pvar = Pconst * (1 + (if time < 1 then 0 elseif time < 31 then -0.5*(time-1)/30 else -0.5));", f);
+      print("  PowerGrids.Types.ActivePower Qvar = Qconst * (1 + (if time < 1 then 0 elseif time < 31 then -0.5*(time-1)/30 else -0.5));", f);
+      print("equation", f);
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  connect(BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_GEN_" + String(i) + "_" + String(j) + ".terminalB);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  connect(GEN_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_GEN_" + String(i) + "_" + String(j) + ".terminalA);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  connect(BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + ".terminalA);", f);
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:N loop
+          print("  connect(LINE_HV_" + String(i) + "_" + String(j) + "_1.terminalA, TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + ".terminalB);", f);
+          for k in 1:M - 1 loop
+            print("  connect(LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminalB, LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k + 1) + ".terminalA);", f);
+          end for;
+          for k in 1:M loop
+            print("  connect(LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminal, LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminalB);", f);
+          end for;
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:2*N - 1 loop
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i + j, 2) + 1] + "_EHV_" + String(i) + "_" + String(div(j - 1, 2) + 1) + ".terminal);", f);
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i + j + 1, 2) + 1] + "_EHV_" + String(i) + "_" + String(div(j, 2) + 1) + ".terminal);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+          print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i + j, 2) + 1] + "_EHV_" + String(i) + "_" + String(div(j - 1, 2) + 1) + ".terminal);", f);
+          print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i + j + 1, 2) + 1] + "_EHV_" + String(i + 1) + "_" + String(div(j - 1, 2) + 1) + ".terminal);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+          print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i + j, 2) + 1] + "_EHV_" + String(i) + "_" + String(div(j - 1, 2) + 1) + ".terminal);", f);
+          print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i + j + 1, 2) + 1] + "_EHV_" + String(i + 1) + "_" + String(div(j - 1, 2) + 1) + ".terminal);", f);
+        end for;
+      end for;
+      print("  annotation(__OpenModelica_commandLineOptions = \"-d=execstat --daeMode --tearingMethod=minimalTearing\",", f);
+      print("             __OpenModelica_simulationFlags(nls=\"kinsol\", lv=\"LOG_STATS\"),", f);
+      print("             experiment(StopTime = 50, Tolerance = 1e-5));", f);
+      print("end Type2_" + (if not useTap then "noTap__" elseif noEv then "tapNoEv" else "tapEv__")+"_N_" + String(N) + "_M_" + String(M) + ";", f);
+    end when;
+  end Type2ModelBuilder_N_1_M_1;
+
+  model Type2ModelBuilder_noTap_N_2_M_2
+    extends Type2ModelBuilder_N_1_M_1(useTap = false, N = 2, M = 2);
+  end Type2ModelBuilder_noTap_N_2_M_2;
+  
+  model Type2ModelBuilder_tapNoEv_N_2_M_2
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = true, UMax = 70e3, UStop = 40e3, N = 2, M = 2);
+  end Type2ModelBuilder_tapNoEv_N_2_M_2;
+  
+  model Type2ModelBuilder_tapEv_N_2_M_2
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60e3, UStop = 59e3, N = 2, M = 2);
+  end Type2ModelBuilder_tapEv_N_2_M_2;
+  
+  model Type2ModelBuilder_noTap_N_2_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = false, N = 2, M = 4);
+  end Type2ModelBuilder_noTap_N_2_M_4;
+  
+  model Type2ModelBuilder_tapNoEv_N_2_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = true, UMax = 70e3, UStop = 40e3, N = 2, M = 4);
+  end Type2ModelBuilder_tapNoEv_N_2_M_4;
+  
+  model Type2ModelBuilder_tapEv_N_2_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60.5e3, UStop = 59e3, N = 2, M = 4);
+  end Type2ModelBuilder_tapEv_N_2_M_4;
+  
+  model Type2ModelBuilder_noTap_N_3_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = false, N = 3, M = 4);
+  end Type2ModelBuilder_noTap_N_3_M_4;
+  
+  model Type2ModelBuilder_tapNoEv_N_3_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = true, UMax = 70e3, UStop = 40e3, N = 3, M = 4);
+  end Type2ModelBuilder_tapNoEv_N_3_M_4;
+
+  model Type2ModelBuilder_tapEv_N_3_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60.5e3, UStop = 59e3, N = 3, M = 4);
+  end Type2ModelBuilder_tapEv_N_3_M_4;
+  
+  model Type2ModelBuilder_noTap_N_4_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = false, N = 4, M = 4);
+  end Type2ModelBuilder_noTap_N_4_M_4;
+  
+  model Type2ModelBuilder_tapNoEv_N_4_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = true, UMax = 70e3, UStop = 40e3, N = 4, M = 4);
+  end Type2ModelBuilder_tapNoEv_N_4_M_4;
+
+  model Type2ModelBuilder_tapEv_N_4_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60.5e3, UStop = 59e3, N = 4, M = 4);
+  end Type2ModelBuilder_tapEv_N_4_M_4;
+  
+  model Type2ModelBuilder_noTap_N_6_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = false, N = 6, M = 4);
+  end Type2ModelBuilder_noTap_N_6_M_4;
+  
+  model Type2ModelBuilder_tapNoEv_N_6_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = true, UMax = 70e3, UStop = 40e3, N = 6, M = 4);
+  end Type2ModelBuilder_tapNoEv_N_6_M_4;
+
+  model Type2ModelBuilder_tapEv_N_6_M_4
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60e3, UStop = 59e3, N = 6, M = 4);
+  end Type2ModelBuilder_tapEv_N_6_M_4;
+  
 end GridModelBuilders;
