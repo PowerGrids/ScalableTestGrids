@@ -655,7 +655,7 @@ package GridModelBuilders "Run these models to build the models contained in the
   end Type2ModelBuilder_tapNoEv_N_2_M_2;
   
   model Type2ModelBuilder_tapEv_N_2_M_2
-    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60e3, UStop = 59e3, N = 2, M = 2);
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60.5e3, UStop = 59e3, N = 2, M = 2);
   end Type2ModelBuilder_tapEv_N_2_M_2;
   
   model Type2ModelBuilder_noTap_N_2_M_4
@@ -703,7 +703,7 @@ package GridModelBuilders "Run these models to build the models contained in the
   end Type2ModelBuilder_tapNoEv_N_6_M_4;
 
   model Type2ModelBuilder_tapEv_N_6_M_4
-    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60e3, UStop = 59e3, N = 6, M = 4);
+    extends Type2ModelBuilder_N_1_M_1(useTap = true, noEv = false, UMax = 60.5e3, UStop = 59e3, N = 6, M = 4);
   end Type2ModelBuilder_tapEv_N_6_M_4;
   
 end GridModelBuilders;
