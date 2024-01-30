@@ -2,6 +2,144 @@ within ScalableTestGrids;
 
 package GridModelBuilders "Run these models to build the models contained in the Models package"
   extends Modelica.Icons.Package;
+  
+  model Type0ModelBuilder_N_1_M_1 "Builds Type0 grid with N = 1, M = 1"
+    extends Modelica.Icons.Example;
+    parameter Integer N = 1 "Number of basic grid cells";
+    parameter Integer M = 1 "Number of HV lines connected to each EHV_LOAD node";
+    String f = Modelica.Utilities.Files.loadResource("modelica://ScalableTestGrids/Models/Type0/Type0_N_" + String(N) + "_M_" + String(M) + ".mo");
+    function print = Modelica.Utilities.Streams.print;
+    parameter String node[2] = {"GEN","LOAD"};
+  algorithm
+    when initial() then
+      Modelica.Utilities.Files.remove(f);
+      print("within ScalableTestGrids.Models.Type0;", f);
+      print("model Type0_N_" + String(N) + "_M_" + String(M), f);
+      print("  extends Modelica.Icons.Example;", f);
+      print("  inner PowerGrids.Electrical.System systemPowerGrids(", f);
+      print("    initOpt = PowerGrids.Types.Choices.InitializationOption.globalSteadyStateFixedPowerFlow);", f);
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          if i == N and j == div(N + 1, 2) then
+            print("  PowerGrids.Electrical.PowerFlow.SlackBus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, U = 400e3 * 0.966, portVariablesPhases = true);", f);
+          else
+            print("  PowerGrids.Electrical.Buses.Bus BUS_GEN_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);", f);
+          end if;
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.Buses.Bus BUS_LOAD_EHV_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, portVariablesPhases = true);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.PowerFlow.PVBus GEN_" + String(i) + "_" + String(j) + "(P = " + String(-800e6) + ", UNom = 21e3, SNom = 1e9);", f);
+        end for;
+      end for;
+      for i in 1:N loop
+        for j in 1:N loop
+          for k in 1:M loop
+            print("  PowerGrids.Electrical.PowerFlow.PQBus LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(P = " + String(800e6/M) + ", Q = " + String(100e6/M) + ", UNom = 63e3, SNom = " + String(1e9 / M) + ");", f);
+          end for;
+        end for;
+      end for;
+      for i in N + 1:2 * N loop
+        for j in 1:N loop
+          for k in 1:M loop
+            print("  PowerGrids.Electrical.PowerFlow.PQBus LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + "(P = " + String(800e6/M) + ", Q = " + String(100e6/M) + ", UNom = 63e3, SNom = " + String(1e9 / M) + ");", f);
+          end for;
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_GEN_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 21e3, UNomB = 400e3, rFixed = 400 / 21, X = 20, R = 0.2, PStartA = 800e6, QStartA = 300e6, PStartB = -800e6, QStartB = -200e6, portVariablesPhases = true);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  PowerGrids.Electrical.Branches.TransformerFixedRatio TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNomA = 400e3, UNomB = 63e3, rFixed = 63 / 400, X = 0.3, R = 0.003, portVariablesPhases = true);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:2 * N - 1 loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_H_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2 * N - 1 loop
+        for j in 1:2 * N loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_V_A_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2 * N - 1 loop
+        for j in 1:2 * N loop
+          print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_EHV_V_B_" + String(i) + "_" + String(j) + "(SNom = 1e9, UNom = 400e3, X = 20, R = 2);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          for k in 1:M loop
+            print("  PowerGrids.Electrical.Branches.LineConstantImpedance LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + "(SNom = 1e9, UNom = 63e3, X = " + String(0.2 / M) + ", R = " + String(0.02 / M) + ");", f);
+          end for;
+        end for;
+      end for;
+      print("  PowerGrids.Types.ActivePower Pconst = 800e6 / "+String(M)+";", f);
+      print("  PowerGrids.Types.ActivePower Qconst = 100e6 / "+String(M)+";", f);
+      print("equation", f);
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  connect(BUS_GEN_EHV_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_GEN_" + String(i) + "_" + String(j) + ".terminalB);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  connect(GEN_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_GEN_" + String(i) + "_" + String(j) + ".terminalA);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  connect(BUS_LOAD_EHV_" + String(i) + "_" + String(j) + ".terminal, TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + ".terminalA);", f);
+        end for;
+      end for;
+      for i in 1:2 * N loop
+        for j in 1:N loop
+          print("  connect(LINE_HV_" + String(i) + "_" + String(j) + "_1.terminalA, TRANSFORMER_LOAD_" + String(i) + "_" + String(j) + ".terminalB);", f);
+          for k in 1:M - 1 loop
+            print("  connect(LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminalB, LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k + 1) + ".terminalA);", f);
+          end for;
+          for k in 1:M loop
+            print("  connect(LOAD_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminal, LINE_HV_" + String(i) + "_" + String(j) + "_" + String(k) + ".terminalB);", f);
+          end for;
+        end for;
+      end for;
+      for i in 1:2*N loop
+        for j in 1:2*N-1 loop
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalA, BUS_"+ node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+          print("  connect(LINE_EHV_H_" + String(i) + "_" + String(j) + ".terminalB, BUS_"+ node[mod(i+j+1,2)+1] + "_EHV_" + String(i) + "_" + String(div(j,2)+1) + ".terminal);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+            print("  connect(LINE_EHV_V_A_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i+j+1,2)+1] + "_EHV_" + String(i+1) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+        end for;
+      end for;
+      for i in 1:2*N - 1 loop
+        for j in 1:2*N loop
+            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalA, BUS_" + node[mod(i+j,2)+1]   + "_EHV_" + String(i) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+            print("  connect(LINE_EHV_V_B_" + String(i) + "_" + String(j) + ".terminalB, BUS_" + node[mod(i+j+1,2)+1] + "_EHV_" + String(i+1) + "_" + String(div(j-1,2)+1) + ".terminal);", f);
+        end for;
+      end for;
+      print("  annotation(__OpenModelica_commandLineOptions = \"-d=execstat --tearingMethod=minimalTearing\",", f);
+      print("             __OpenModelica_simulationFlags(lv=\"LOG_STATS\"),", f);
+      print("             experiment(StopTime = 1, Interval = 1));", f);
+      print("end Type0_N_" + String(N) + "_M_" + String(M) + ";", f);
+    end when;
+  end Type0ModelBuilder_N_1_M_1;
+
+  model Type0ModelBuilder_N_2_M_2
+    extends ScalableTestGrids.GridModelBuilders.Type0ModelBuilder_N_1_M_1(N = 2, M = 2);
+  end Type0ModelBuilder_N_2_M_2;
 
   model Type1ModelBuilder_N_1_M_1 "Builds Type1 grid with N = 1, M = 1"
     extends Modelica.Icons.Example;
